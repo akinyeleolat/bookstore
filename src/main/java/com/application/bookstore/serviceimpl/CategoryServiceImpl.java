@@ -1,8 +1,13 @@
 package com.application.bookstore.serviceimpl;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
+import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.application.bookstore.repository.CategoryDao;
@@ -19,32 +24,43 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryDao = categoryDao;
     }
 
+
     @Override
-    public Category addCategory(Category category) {
-        return categoryDao.save(category);
+    public ResponseEntity<?> addCategory(Category category) throws DuplicateResourceException {
+
+        Optional<Category> nCategory = categoryDao.findByName(category.getName());
+        if(nCategory.isEmpty()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(categoryDao.save(category));
+        }
+        throw new DuplicateResourceException("book named "+category.getName()+" exist");
+
     }
 
     @Override
-    public Category editCategory(Category category, long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> editCategory(Category category, long id) throws ResourceNotFoundException {
         Category existCategory = categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + id));
         existCategory.setName(category.getName());
-        return categoryDao.save(existCategory);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryDao.save(existCategory));
     }
 
     @Override
-    public void deleteCategory(long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> deleteCategory(long id) throws ResourceNotFoundException {
         Category existCategory = categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + id));
         categoryDao.deleteById(existCategory.getId());
+        Map<String, String> response = new HashMap<>();
+        response.put("deleted", String.valueOf(Boolean.TRUE));
+        response.put("category name", existCategory.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Override
-    public Category findCategoryById(long id) {
-        return categoryDao.findById(id).orElse(null);
+    public ResponseEntity<?> findCategoryById(long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryDao.findById(id).orElse(null));
     }
 
     @Override
-    public List<Category> findAllCategories() {
-        return categoryDao.findAll();
+    public ResponseEntity<?> findAllCategories() {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryDao.findAll());
     }
 
 }

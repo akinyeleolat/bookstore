@@ -1,26 +1,26 @@
 package com.application.bookstore.service;
 
-import java.util.List;
-
+import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
 import com.application.bookstore.model.Book;
+import org.springframework.http.ResponseEntity;
 
 public interface BookService {
 
-    Book addBook(Book book);
+    ResponseEntity<?> addBook(Book book) throws DuplicateResourceException;
 
-    Book addBookToCategory(Book book, long id) throws ResourceNotFoundException;
+    ResponseEntity<?> addBookToCategory(Book book, long id) throws ResourceNotFoundException;
 
-    Book editBook(Book book, long id, long idCategory) throws ResourceNotFoundException;
+    ResponseEntity<?> editBook(Book book, long id) throws ResourceNotFoundException;
 
-    void deleteBook(long id) throws ResourceNotFoundException;
+    ResponseEntity<?> deleteBook(long id) throws ResourceNotFoundException;
 
-    Book findBookByName(String name);
+    ResponseEntity<?> findBookByName(String name);
 
-    Book findBookById(long id);
+    ResponseEntity<?> findBookById(long id);
 
-    List<Book> findAllBooks();
+    ResponseEntity<?> findAllBooks();
 
-    List<Book> findBooksForCategory(long id) throws ResourceNotFoundException;
+    ResponseEntity<?> findBooksForCategory(long id) throws ResourceNotFoundException;
 }
 

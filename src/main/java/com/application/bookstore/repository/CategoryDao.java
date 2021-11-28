@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.application.bookstore.model.Category;
 
 public interface CategoryDao extends JpaRepository<Category, Long> {
-
+    Optional<Category> findByName(String name);
 }

@@ -1,11 +1,11 @@
 package com.application.bookstore.serviceimpl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.application.bookstore.repository.BookDao;
@@ -28,19 +28,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book addBook(Book book) {
-        return bookDao.save(book);
+    public ResponseEntity<?> addBook(Book book) throws DuplicateResourceException {
+
+        Optional<Book> nBook = bookDao.findByName(book.getName());
+        if(nBook.isEmpty()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(bookDao.save(book));
+        }
+        throw new DuplicateResourceException("book named "+book.getName()+" exist");
+
     }
 
     @Override
-    public Book addBookToCategory(Book book, long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> addBookToCategory(Book book, long id) throws ResourceNotFoundException {
         Category category = categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + id));
         category.addBookToCategory(book);
-        return bookDao.save(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookDao.save(book));
     }
 
     @Override
-    public Book editBook(Book book, long id, long idCategory) throws ResourceNotFoundException {
+    public ResponseEntity<?> editBook(Book book, long id) throws ResourceNotFoundException {
         Book existsBook = bookDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found on :: " + id));
         existsBook.setName(book.getName());
         existsBook.setDescription(book.getDescription());
@@ -52,35 +58,39 @@ public class BookServiceImpl implements BookService {
         existsBook.setPage(book.getPage());
         existsBook.setWriter(book.getWriter());
         existsBook.setPublisher(book.getPublisher());
-        return bookDao.save(existsBook);
+        return ResponseEntity.status(HttpStatus.OK).body(bookDao.save(book));
     }
 
     @Override
-    public void deleteBook(long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> deleteBook(long id) throws ResourceNotFoundException {
         Book existsBook = bookDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found on :: " + id));
         bookDao.deleteById(existsBook.getId());
+        Map<String, String> response = new HashMap<>();
+        response.put("deleted", String.valueOf(Boolean.TRUE));
+        response.put("book Name", existsBook.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Override
-    public Book findBookByName(String name) {
+    public ResponseEntity<?> findBookByName(String name) {
         Optional<Book> books = bookDao.findByName(name);
-        return books.orElse(null);
+        return ResponseEntity.status(HttpStatus.OK).body(books.orElse(null));
     }
 
     @Override
-    public Book findBookById(long id) {
-        return bookDao.findById(id).orElse(null);
+    public ResponseEntity<?> findBookById(long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(bookDao.findById(id).orElse(null));
     }
 
     @Override
-    public List<Book> findAllBooks() {
-        return bookDao.findAll();
+    public ResponseEntity<?> findAllBooks() {
+        return ResponseEntity.status(HttpStatus.OK).body(bookDao.findAll());
     }
 
     @Override
-    public List<Book> findBooksForCategory(long id) throws ResourceNotFoundException {
+    public ResponseEntity<?> findBooksForCategory(long id) throws ResourceNotFoundException {
         Category category = categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + id));
-        return category.getBooks();
+        return ResponseEntity.status(HttpStatus.OK).body(category.getBooks());
     }
 
 }
