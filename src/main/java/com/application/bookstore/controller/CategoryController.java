@@ -1,9 +1,8 @@
 package com.application.bookstore.controller;
 
-import java.util.List;
-
 import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,27 +30,27 @@ public class CategoryController {
     }
 
     @PostMapping("/category")
-    Category createCategory(@Valid @RequestBody Category category) throws DuplicateResourceException {
+    ResponseEntity<?> createCategory(@Valid @RequestBody Category category) throws DuplicateResourceException {
         return categoryService.addCategory(category);
     }
 
     @PutMapping("/editCategory/{id}")
-    Category editCategory(@RequestBody Category category, @PathVariable long id) throws ResourceNotFoundException {
+    ResponseEntity<?> editCategory(@RequestBody Category category, @PathVariable long id) throws ResourceNotFoundException {
         return categoryService.editCategory(category, id);
     }
 
     @DeleteMapping("/deleteCategory/{id}")
-    void deleteCategory(@PathVariable long id) throws ResourceNotFoundException {
-        categoryService.deleteCategory(id);
+    ResponseEntity<?> deleteCategory(@PathVariable long id) throws ResourceNotFoundException {
+        return categoryService.deleteCategory(id);
     }
 
     @GetMapping("/findCategoryById/{id}")
-    Category findCategoryById(@PathVariable long id) {
+    ResponseEntity<?> findCategoryById(@PathVariable long id) {
         return categoryService.findCategoryById(id);
     }
 
     @GetMapping("/Categories")
-    List<Category> findAllCategories() {
+    ResponseEntity<?> findAllCategories() {
         return categoryService.findAllCategories();
     }
 
