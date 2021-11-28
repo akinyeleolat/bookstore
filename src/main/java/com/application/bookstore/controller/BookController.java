@@ -1,2 +1,4 @@
-package com.application.bookstore.controller;public class BookController {
+package com.application.bookstore.controller;
+
+public class BookController {
 }
