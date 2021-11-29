@@ -1,7 +1,5 @@
 package com.application.bookstore.model;
 
-package com.esl.walletservice.models;
-
 public class ResponseModel {
 
     private String status;

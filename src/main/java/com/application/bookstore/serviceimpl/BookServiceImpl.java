@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
+import com.application.bookstore.model.ResponseModel;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class BookServiceImpl implements BookService {
         category.addBookToCategory(existingBook);
         bookDao.save(existingBook);
         response.put("book",existingBook);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseModel(HttpStatus.CREATED.toString(),"Books added to category",response));
     }
 
     @Override
