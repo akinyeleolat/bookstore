@@ -11,6 +11,8 @@ public interface BookService {
 
     ResponseEntity<?> addBookToCategory(Book book, long id) throws ResourceNotFoundException;
 
+    ResponseEntity<?> addBookToCategory(long bookId, long categoryId) throws ResourceNotFoundException;
+
     ResponseEntity<?> editBook(Book book, long id) throws ResourceNotFoundException;
 
     ResponseEntity<?> deleteBook(long id) throws ResourceNotFoundException;

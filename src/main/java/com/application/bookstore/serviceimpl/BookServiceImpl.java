@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.application.bookstore.exception.DuplicateResourceException;
 import com.application.bookstore.exception.ResourceNotFoundException;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<?> addBookToCategory(Book book, long id) throws ResourceNotFoundException {
         Category category = categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + id));
+        Map<String, Object> response = new HashMap<>();
+        response.put("categoryId", category.getId());
+        response.put("categoryName", category.getName());
+        if(book.getId() == 0){
+            category.addBookToCategory(book);
+            bookDao.save(book);
+            response.put("book",book);
+        }
+        long bookId = book.getId();
+        Book existingBook = bookDao.findById(bookId).orElseThrow(() -> new ResourceNotFoundException("Book not found on :: " + bookId));
+        category.addBookToCategory(existingBook);
+        bookDao.save(existingBook);
+        response.put("book",existingBook);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Override
+    public ResponseEntity<?> addBookToCategory(long bookId, long categoryId) throws ResourceNotFoundException {
+        Category category = categoryDao.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found on :: " + categoryId));
+        Book book = bookDao.findById(bookId).orElseThrow(() -> new ResourceNotFoundException("Book not found on :: " + bookId));
         category.addBookToCategory(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookDao.save(book));
     }

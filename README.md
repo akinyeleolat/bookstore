@@ -21,7 +21,6 @@ mvn spring-boot:run
 ```
 ## Api documentation
 - [Swagger](http://localhost:9090/swagger-ui.html#/)
-- [Postman](http://localhost:9090/swagger-ui.html#/)
 - [Explorer](http://localhost:9090/explorer/index.html#uri=/) 
 
 

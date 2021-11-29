@@ -49,7 +49,7 @@ public class CategoryController {
         return categoryService.findCategoryById(id);
     }
 
-    @GetMapping("/Categories")
+    @GetMapping("/categories")
     ResponseEntity<?> findAllCategories() {
         return categoryService.findAllCategories();
     }

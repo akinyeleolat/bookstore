@@ -36,7 +36,7 @@ public class BookController {
     }
 
     @PostMapping("/addBookToCategory/{id}")
-    ResponseEntity<?> addBookToCategory(@RequestBody Book book, @PathVariable long id) throws ResourceNotFoundException {
+    ResponseEntity<?> addBookToCategory(@Valid @RequestBody Book book, @PathVariable long id) throws ResourceNotFoundException {
         return bookService.addBookToCategory(book, id);
     }
 

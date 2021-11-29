@@ -1,13 +1,8 @@
 package com.application.bookstore.model;
 
 import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
@@ -18,14 +13,18 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(unique = true, nullable = false, columnDefinition="varchar(20)" )
     private String name;
     private String photo;
     private String description;
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;
+    @Column(unique = true, nullable = false, columnDefinition="varchar(20)" )
     private String writer;
+    @Column(unique = true, nullable = false )
     private double price;
     private String language;
+    @Column(unique = true, nullable = false)
     private String publisher;
     private int page;
     private float size;
